@@ -28,20 +28,18 @@ Brightness is also refreshed automatically when the Mac wakes from sleep.
    npm run build
    ```
 
-2. Link the plugin into Stream Deck's plugin folder and restart it:
+2. Link the plugin into Stream Deck's plugin folder and load it:
 
    ```sh
    npx streamdeck link com.esteele.monitorbrightness.sdPlugin
-   npx streamdeck restart com.esteele.monitorbrightness
+   npm run reload
    ```
 
-   `streamdeck link` only needs to be run once. If the plugin doesn't seem to pick up a rebuild
-   after `restart`, the Node process can be left running stale code — find and kill it directly
-   and Stream Deck will respawn it with the current build:
-
-   ```sh
-   pkill -f "monitorbrightness.sdPlugin/bin/plugin.js"
-   ```
+   `streamdeck link` only needs to be run once. `npm run reload` tries the official
+   `streamdeck restart` first — which is unreliable in practice, since it just fires a deep link
+   at the Stream Deck app without confirming the plugin actually reloaded — and automatically
+   falls back to force-killing the stale process (which Stream Deck immediately respawns) if it
+   detects the restart didn't take effect. See `scripts/reload-plugin.sh`.
 
 3. In the Stream Deck app, open the "Monitor Brightness" category and drag the "Monitor
    Brightness" action onto up to 4 dials on your Stream Deck+ profile.
@@ -71,6 +69,7 @@ Brightness is also refreshed automatically when the Mac wakes from sleep.
 npm run watch
 ```
 
-Rebuilds on save and asks Stream Deck to restart the plugin. As noted above, if changes don't seem
-to take effect, confirm with `ps aux | grep monitorbrightness.sdPlugin` that the running process's
-start time actually changed, and `pkill` it if not.
+Rebuilds on save and reloads the plugin via `scripts/reload-plugin.sh`, which verifies (by PID and
+process start time) whether `streamdeck restart` actually took effect and force-kills the stale
+process if not — watch its `[reload-plugin] ...` output to see whether a given rebuild needed the
+fallback.

@@ -3,7 +3,8 @@
 	"private": true,
 	"scripts": {
 		"build": "rollup -c",
-		"watch": "rollup -c -w --watch.onEnd=\"streamdeck restart com.esteele.monitorbrightness\""
+		"reload": "bash scripts/reload-plugin.sh",
+		"watch": "rollup -c -w --watch.onEnd=\"bash scripts/reload-plugin.sh\""
 	},
 	"type": "module",
 	"devDependencies": {
