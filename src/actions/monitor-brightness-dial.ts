@@ -108,7 +108,10 @@ export class MonitorBrightnessDial extends SingletonAction<DialSettings> {
 		try {
 			if (previousBrightness === undefined) {
 				const raw = await this.queryBrightness(displayName);
-				if (raw === undefined) return;
+				if (raw === undefined) {
+					await action.setFeedback({ title: displayName, value: "ERR", indicator: { value: 0 } });
+					return;
+				}
 
 				await this.setBrightness(displayName, 0);
 				await action.setSettings({ displayName, previousBrightness: round10(raw) });
