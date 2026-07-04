@@ -6,15 +6,14 @@
 	</head>
 	<body>
 		<sdpi-item label="Display">
-			<sdpi-textfield setting="displayName" placeholder="e.g. P27u-20" list="known-displays"></sdpi-textfield>
-			<datalist id="known-displays">
-				<option value="P27u-20"></option>
-				<option value="Studio Display"></option>
-				<option value="Built-in"></option>
-			</datalist>
+			<sdpi-select setting="displayName" placeholder="Select a monitor">
+				<option value="P27u-20">P27u-20</option>
+				<option value="Studio Display">Studio Display</option>
+				<option value="Built-in">Built-in</option>
+			</sdpi-select>
 		</sdpi-item>
 		<sdpi-item label="Note">
-			<span>Must match the display name Lunar uses (run <code>lunar displays</code> to check). Brightness changes in 10% steps per dial detent.</span>
+			<span>Brightness changes in 10% steps per dial detent.</span>
 		</sdpi-item>
 	</body>
 </html>
