@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+	</head>
+	<body>
+		<sdpi-item label="Display">
+			<sdpi-textfield setting="displayName" placeholder="e.g. P27u-20" list="known-displays"></sdpi-textfield>
+			<datalist id="known-displays">
+				<option value="P27u-20"></option>
+				<option value="Studio Display"></option>
+				<option value="Built-in"></option>
+			</datalist>
+		</sdpi-item>
+		<sdpi-item label="Note">
+			<span>Must match the display name Lunar uses (run <code>lunar displays</code> to check). Brightness changes in 10% steps per dial detent.</span>
+		</sdpi-item>
+	</body>
+</html>

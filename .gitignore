@@ -1,0 +1,4 @@
+node_modules/
+com.esteele.monitorbrightness.sdPlugin/bin/
+*.log
+.claude/
