@@ -8,7 +8,7 @@
 			"Name": "Monitor Brightness",
 			"UUID": "com.esteele.monitorbrightness.dial",
 			"Icon": "imgs/actions/dial/icon",
-			"Tooltip": "Adjusts a Lunar-managed monitor's brightness in 10% steps using a Stream Deck+ dial.",
+			"Tooltip": "Rotate to adjust a Lunar-managed monitor's brightness in 10% steps; press to blackout and restore.",
 			"PropertyInspectorPath": "ui/dial.html",
 			"Controllers": ["Encoder"],
 			"UserTitleEnabled": false,
@@ -21,7 +21,8 @@
 			"Encoder": {
 				"layout": "$B1",
 				"TriggerDescription": {
-					"Rotate": "Adjust brightness by 10%"
+					"Rotate": "Adjust brightness by 10%",
+					"Push": "Blackout / restore brightness"
 				}
 			}
 		}
