@@ -11,6 +11,7 @@
 			"Tooltip": "Adjusts a Lunar-managed monitor's brightness in 10% steps using a Stream Deck+ dial.",
 			"PropertyInspectorPath": "ui/dial.html",
 			"Controllers": ["Encoder"],
+			"UserTitleEnabled": false,
 			"States": [
 				{
 					"Image": "imgs/actions/dial/icon",
