@@ -64,6 +64,9 @@ export class MonitorBrightnessDial extends SingletonAction<DialSettings> {
 	/** Per-display hardware write queue, so writes apply in order without blocking the UI on them. */
 	private readonly writeState = new Map<string, WriteState>();
 
+	/** In-flight `lunar refresh-displays` call, if any, shared so concurrent failures don't each trigger their own. */
+	private refreshingDisplays: Promise<void> | undefined;
+
 	constructor() {
 		super();
 
@@ -224,23 +227,51 @@ export class MonitorBrightnessDial extends SingletonAction<DialSettings> {
 		return brightness;
 	}
 
-	private async queryBrightness(displayName: string): Promise<number | undefined> {
+	private async queryBrightness(displayName: string, retrying = false): Promise<number | undefined> {
 		try {
 			const { stdout } = await execFileAsync(LUNAR_BIN, ["displays", displayName, "brightness"]);
 			const match = stdout.match(/brightness:\s*(\d+)/i);
 			return match ? Number(match[1]) : undefined;
 		} catch (error) {
+			if (!retrying) {
+				await this.refreshDisplays();
+				return this.queryBrightness(displayName, true);
+			}
 			streamDeck.logger.error(`Failed to read brightness for display "${displayName}"`, error);
 			return undefined;
 		}
 	}
 
-	private async setBrightness(displayName: string, value: number): Promise<void> {
+	private async setBrightness(displayName: string, value: number, retrying = false): Promise<void> {
 		try {
 			await execFileAsync(LUNAR_BIN, ["displays", displayName, "brightness", String(value)]);
 		} catch (error) {
+			if (!retrying) {
+				await this.refreshDisplays();
+				return this.setBrightness(displayName, value, true);
+			}
 			streamDeck.logger.error(`Failed to set brightness for display "${displayName}"`, error);
 		}
+	}
+
+	/**
+	 * Lunar's own display list can go stale after long uptime (it "forgets" displays that are
+	 * still physically connected, causing every read/write for them to fail as if the display
+	 * doesn't exist). `refresh-displays` makes Lunar rescan without restarting the app. Shared
+	 * across concurrent callers so several dials failing at once trigger only one rescan.
+	 */
+	private async refreshDisplays(): Promise<void> {
+		if (!this.refreshingDisplays) {
+			this.refreshingDisplays = execFileAsync(LUNAR_BIN, ["refresh-displays"])
+				.then(() => undefined)
+				.catch((error) => {
+					streamDeck.logger.error("Failed to refresh Lunar's display list", error);
+				})
+				.finally(() => {
+					this.refreshingDisplays = undefined;
+				});
+		}
+		return this.refreshingDisplays;
 	}
 
 	/**
